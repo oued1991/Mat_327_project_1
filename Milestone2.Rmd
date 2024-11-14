@@ -1,0 +1,133 @@
+---
+title: "Milestone2"
+author: "Abass"
+date: "2024-09-20"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+This project uses the data science jobs and salaries dataset from Kaggle (https://www.kaggle.com/datasets/hummaamqaasim/jobs- in-data/data). The author of this dataset is Hummaam Qaasim. In this project I want to have a better understanding of the salary ranges for various data science roles based on experience, location and company size. The data has 12 columns. Description of each of the variables: work_year: The year in which the data was recorded. This field indicates the temporal context of the data, important for understanding salary trends over time. job_title: The specific title of the job role, like 'Data Scientist', 'Data Engineer', or 'Data Analyst'. This column is crucial for understanding the salary distribution across various specialized roles within the data field. job_category: A classification of the job role into broader categories for easier analysis. This might include areas like 'Data Analysis', 'Machine Learning', 'Data Engineering', etc. salary_currency: The currency in which the salary is paid, such as USD, EUR, etc. This is important for currency conversion and understanding the actual value of the salary in a global context. salary: The annual gross salary of the role in the local currency. This raw salary figure is key for direct regional salary comparisons. salary_in_usd: The annual gross salary converted to United States Dollars (USD). This uniform currency conversion aids in global salary comparisons and analyses.
+
+ employee_residence: The country of residence of the employee. This data point can be used to explore geographical salary differences and cost-of-living variations. experience_level: Classifies the professional experience level of the employee. Common categories might include 'Entry-level', 'Mid-level', 'Senior', and 'Executive', providing insight into how experience influences salary in data-related roles. employment_type: Specifies the type of employment, such as 'Full-time', 'Part-time', 'Contract', etc. This helps in analyzing how different employment arrangements affect salary structures. work_setting: The work setting or environment, like 'Remote', 'In-person', or 'Hybrid'. This column reflects the impact of work settings on salary levels in the data industry. company_location: The country where the company is located. It helps in analyzing how the location of the company affects salary structures. company_size: The size of the employer company, often categorized into small (S), medium (M), and large (L) sizes. This allows for analysis of how company size influences salary. One qualitative data column for this dataset is the job_title. Salary and salary_in_usd are quantitative data.
+
+
+```{r}
+library(readr)
+```
+
+
+```{r}
+jobs <- read_csv("jobs_in_data.csv.zip")
+View(jobs)
+```
+
+
+# make a histogram of the values in the salary column
+```{r}
+hist(jobs$salary)
+```
+
+
+
+
+We can observe that our distribution is right skewed with an outlier at the right. Most of the salaries are between 100k to 200k which is not bad at all.Jobs in this related field are highly paid.
+
+
+
+
+# make a barplot of the values in the experience_level column
+```{r}
+barplot(table(jobs$experience_level))
+```
+
+
+
+
+The barplot is showing that most jobs required a senior level experience.
+
+
+
+# make a histogram of the values in the salary_in_usd column
+```{r}
+hist(jobs$salary_in_usd)
+```
+
+# make a barplot of the values in the job_category column
+
+```{r}
+barplot(table(jobs$job_category), las=2)
+```
+
+
+
+
+
+Most of the positions are in data engineering and data science and research.
+
+
+
+# make a barplot of the values in the job_title column
+
+```{r}
+barplot(table(jobs$job_title), las=2)
+```
+
+
+
+
+Most companies need data engineers.
+
+
+
+
+
+Milestone 4
+
+
+```{r}
+sum(is.na(jobs$salary_in_usd))
+```
+There is no missing data in my salary_in_usd column.
+
+
+```{r}
+summary(jobs$salary_in_usd)
+```
+
+We can see that there is outliers in the right hand of our histogram. 15000 is the minimum salary and 450000 is the maximum salary.
+
+
+#removing outliers
+
+
+```{r}
+Q1 <- quantile(jobs$salary_in_usd, 0.25, na.rm = TRUE)
+Q3 <- quantile(jobs$salary_in_usd, 0.75, na.rm = TRUE)
+IQR_value <- IQR(jobs$salary_in_usd, na.rm = TRUE)
+```
+
+
+```{r}
+lower_bound <- Q1 - 1.5 * IQR_value
+upper_bound <- Q3 + 1.5 * IQR_value
+```
+
+```{r}
+jobs2 <- jobs[jobs$salary_in_usd >= lower_bound & jobs$salary_in_usd <= upper_bound, ]
+```
+
+```{r}
+summary(jobs2$salary_in_usd)
+```
+
+```{r}
+hist(jobs2$salary_in_usd)
+```
+
+This is the new histogram of salary_in_usd without outliers.
+
